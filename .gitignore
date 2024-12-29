@@ -58,3 +58,5 @@ dkms.conf
 startup_MKL05Z4.s
 system_MKL05Z4.c
 RTE*
+JLink*
+Objects/
