@@ -60,3 +60,4 @@ system_MKL05Z4.c
 RTE*
 JLink*
 Objects/
+EventRecorderStub.scvd
