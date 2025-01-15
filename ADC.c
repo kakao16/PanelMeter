@@ -1,48 +1,76 @@
+/**
+ * @file ADC.c
+ * @author Stanislaw Kusiak
+ * @date winter 2024/2025 semester
+ * @brief File containing definitions for ADC module. 
+ * @ver 1.0
+ * Based on file provided for tutorials.
+ */
+
 #include "ADC.h"
 
 uint8_t ADC_Init(void)
 {
-	uint16_t kalib_temp;
-	SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;          // Dołączenie sygnału zegara do ADC0
+	SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;          // ADC0 clock enable
+	
+	// Clock gate configuration for					
+	// Port A 
 	SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;
-	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;					// Dołączenie sygnału zegara do portu B
+	// Port B 	
+	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;					
 	
-	PORTA->PCR[8]	&= ~(PORT_PCR_MUX(7));
-	PORTA->PCR[9]	&= ~(PORT_PCR_MUX(7));
-	PORTB->PCR[2] &= ~(PORT_PCR_MUX(7));				
-	PORTB->PCR[13] &= ~(PORT_PCR_MUX(7));
+	// Pin configuration for adc0
+	// Port A 
+	PORTA->PCR[8]	|= PORT_PCR_MUX(0);
+	PORTA->PCR[9]	|= PORT_PCR_MUX(0);
+	// Port B
+	PORTB->PCR[2] |= PORT_PCR_MUX(0);			
+	PORTB->PCR[13] |= PORT_PCR_MUX(0);
 	
-	ADC0->CFG1 = ADC_CFG1_ADICLK(ADICLK_BUS_2) | ADC_CFG1_ADIV(ADIV_4) | ADC_CFG1_ADLSMP_MASK;	// Zegar wejściowy BUS/2=10.49MHz, zegar ADCK równy 2.62MHz (2621440Hz), długi czas prókowania
-	ADC0->CFG2 = ADC_CFG2_ADHSC_MASK;										// Włącz wspomaganie zegara o dużej częstotliwości
-	ADC0->SC3  = ADC_SC3_AVGE_MASK | ADC_SC3_AVGS(3);		// Włącz uśrednianie na 32 próbki
-	ADC0->SC3 |= ADC_SC3_CAL_MASK;											// Rozpoczęcie kalibracji
-	while(ADC0->SC3 & ADC_SC3_CAL_MASK);								// Czekaj na koniec kalibracji
+	// ADC0 config for calibration
+	ADC0->CFG1 =	ADC_CFG1_ADICLK(ADICLK_BUS_2) | 			// Input clk equal to BUS/2 = 10.49MHz, 
+								ADC_CFG1_ADIV(ADIV_4) | 							// divided by 4 so ADCK = 2621440Hz,
+								ADC_CFG1_ADLSMP_MASK;									// long sample time selected,
+	ADC0->CFG2 = ADC_CFG2_ADHSC_MASK;										// High speed conversion enabled
+	ADC0->SC3  = ADC_SC3_AVGE_MASK | ADC_SC3_AVGS(3);		// Averege from 32 samples
 	
-	if(ADC0->SC3 & ADC_SC3_CALF_MASK)
+	ADC0->SC3 |= ADC_SC3_CAL_MASK;											// Start calibration
+	while(ADC0->SC3 & ADC_SC3_CAL_MASK);								// Wait for calibration to finish
+	
+	if(ADC0->SC3 & ADC_SC3_CALF_MASK)										// Check for calibration error
 	{
 	  ADC0->SC3 |= ADC_SC3_CALF_MASK;
-	  return(1);																				// Wróć, jeśli błąd kalibracji
+	  return(1);
 	}
+
+	uint16_t cal_temp;
+	cal_temp = 0x00;
+	cal_temp += ADC0->CLP0;
+	cal_temp += ADC0->CLP1;
+	cal_temp += ADC0->CLP2;
+	cal_temp += ADC0->CLP3;
+	cal_temp += ADC0->CLP4;
+	cal_temp += ADC0->CLPS;
+	cal_temp += ADC0->CLPD;
+	cal_temp /= 2;
+	cal_temp |= 0x8000;                       	// MSB set to 1
+	ADC0->PG = ADC_PG_PG(cal_temp);           	// Value stored to plus-side gain register
 	
-	kalib_temp = 0x00;
-	kalib_temp += ADC0->CLP0;
-	kalib_temp += ADC0->CLP1;
-	kalib_temp += ADC0->CLP2;
-	kalib_temp += ADC0->CLP3;
-	kalib_temp += ADC0->CLP4;
-	kalib_temp += ADC0->CLPS;
-	kalib_temp += ADC0->CLPD;
-	kalib_temp /= 2;
-	kalib_temp |= 0x8000;                       // Ustaw najbardziej znaczący bit na 1
-	ADC0->PG = ADC_PG_PG(kalib_temp);           // Zapisz w  "plus-side gain calibration register"
-	//ADC0->OFS = 0;														// Klaibracja przesunięcia zera (z pomiaru swojego punktu odniesienia - masy)
-	ADC0->SC1[0] = ADC_SC1_ADCH(31);						// Zablokuj przetwornik ADC0
-	ADC0->CFG2 |= ADC_CFG2_ADHSC_MASK;					// Włącz tryb szybkiej konwersji
-	ADC0->CFG1 = ADC_CFG1_ADICLK(ADICLK_BUS_2) | ADC_CFG1_ADIV(ADIV_1) | ADC_CFG1_ADLSMP_MASK | ADC_CFG1_MODE(MODE_12);	// Zegar ADCK równy 10.49MHz, rozdzielczość 12 bitów, długi czas próbkowania
-	ADC0->SC2 |= ADC_SC2_ADTRG_MASK;						// Włączenie wyzwalania sprzętowego
-	SIM->SOPT7 |= SIM_SOPT7_ADC0ALTTRGEN_MASK | SIM_SOPT7_ADC0TRGSEL(4);		// Wyzwalanie ADC0 przez PIT0
+	// ADC0 config for normal operation
+	ADC0->SC1[0] = ADC_SC1_ADCH(31);							// Disable ADC
+	ADC0->CFG1 =	ADC_CFG1_ADICLK(ADICLK_BUS_2) | // Input clk equal to BUS/2 = 10.49MHz, 
+								ADC_CFG1_ADIV(ADIV_1) | 				// divide by 1 so ADCK = 10.49MHz, 
+								ADC_CFG1_ADLSMP_MASK | 					// long sample time selected,
+								ADC_CFG1_MODE(MODE_12);					// set to 12 bit resolution
+	ADC0->CFG2 |= ADC_CFG2_ADHSC_MASK;						// High speed conversion enabled
+	
+	// ADC trigger config
+	ADC0->SC2 |= ADC_SC2_ADTRG_MASK;							// Hardwear trigger selected
+	SIM->SOPT7 |= SIM_SOPT7_ADC0ALTTRGEN_MASK | 	
+								SIM_SOPT7_ADC0TRGSEL(4);				// ADC0 triggered from PIT0
 	NVIC_ClearPendingIRQ(ADC0_IRQn);
 	NVIC_EnableIRQ(ADC0_IRQn);
-	return(0);																	// Wróć, jeśli wszystko w porządku
+	
+	return(0);
 }
 
