@@ -21,11 +21,11 @@ uint8_t ADC_Init(void)
 	
 	// Pin configuration for adc0
 	// Port A 
-	PORTA->PCR[8]	|= PORT_PCR_MUX(0);
-	PORTA->PCR[9]	|= PORT_PCR_MUX(0);
+	PORTA->PCR[VOLTAGE_1_PIN]	|= PORT_PCR_MUX(0);
+	PORTA->PCR[CURRENT_1_PIN]	|= PORT_PCR_MUX(0);
 	// Port B
-	PORTB->PCR[2] |= PORT_PCR_MUX(0);			
-	PORTB->PCR[13] |= PORT_PCR_MUX(0);
+	PORTB->PCR[VOLTAGE_2_PIN] |= PORT_PCR_MUX(0);			
+	PORTB->PCR[CURRENT_2_PIN] |= PORT_PCR_MUX(0);
 	
 	// ADC0 config for calibration
 	ADC0->CFG1 =	ADC_CFG1_ADICLK(ADICLK_BUS_2) | 			// Input clk equal to BUS/2 = 10.49MHz, 

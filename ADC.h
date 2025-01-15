@@ -37,7 +37,7 @@
 #define ADLSTS_6           0x02
 #define ADLSTS_2           0x03
 //-----------------------------------------------
-//ADCSC2
+// ADCSC2
 //-----------------------------------------------
 // Reference voltage
 #define REFSEL_EXT         0x00
@@ -45,13 +45,27 @@
 #define REFSEL_RES         0x02 
 #define REFSEL_RES_EXT     0x03 
 //-----------------------------------------------
-//ADC0_SC3
+// ADC0_SC3
 //-----------------------------------------------
 // Averaging 
 #define AVGS_4             0x00
 #define AVGS_8             0x01
 #define AVGS_16            0x02
 #define AVGS_32            0x03
+//-----------------------------------------------
+// Measurement pins
+//-----------------------------------------------
+#define VOLTAGE_1_PIN				8			// PTA8
+#define CURRENT_1_PIN				9			// PTA9
+#define VOLTAGE_2_PIN				2			// PTB2
+#define CURRENT_2_PIN				13		// PTB13
+//-----------------------------------------------
+// Measurement channels
+//-----------------------------------------------
+#define VOLTAGE_1_CH				3
+#define CURRENT_1_CH				2
+#define VOLTAGE_2_CH				4
+#define CURRENT_2_CH				13
 //************************************************
 
 /**

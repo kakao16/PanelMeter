@@ -8,14 +8,19 @@
 
 #include "main.h"
 
-static volatile float adc_volt_coeff = 2.897f / 4095.0f;
 static volatile uint8_t result_ok = 0;
-
 static volatile float result;
-static volatile uint8_t ch_counter = 0;
-static volatile uint8_t channel[] = {3, 2, 4, 13};
 
-int main(void) {
+static const float adc_volt_coeff = 2.897f / 4095.0f;
+static uint8_t measurement_cnt = 0;
+static const uint8_t measuremenst[] = {
+	VOLTAGE_1_CH, 
+	CURRENT_1_CH, 
+	VOLTAGE_2_CH, 
+	CURRENT_2_CH
+};
+
+int main() {
 	char display[21];
 	LCD1602_Init();
 	LCD1602_Backlight(TRUE);
@@ -40,7 +45,7 @@ int main(void) {
 	while(1) {
 		if(result_ok) {
 			result = result*adc_volt_coeff;
-			switch(ch_counter) {
+			switch(measurement_cnt) {
 				case 0:
 					sprintf(display,"U1=%.4fV", result);
 					break;
@@ -55,15 +60,15 @@ int main(void) {
 					break;
 			}
 			
-			if(ch_counter < 4) {
-				LCD1602_SetCursor(0,ch_counter);
+			if(measurement_cnt < 4) {
+				LCD1602_SetCursor(0,measurement_cnt);
 				LCD1602_Print(display);
-				ch_counter++;
+				measurement_cnt++;
 			}
 			else {
-				ch_counter = 0;
+				measurement_cnt = 0;
 			}
-			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(channel[ch_counter]);
+			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measuremenst[measurement_cnt]);
 			result_ok = 0;
 		}
 	}
