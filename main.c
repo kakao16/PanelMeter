@@ -13,6 +13,7 @@ static volatile float result;
 
 static const float adc_volt_coeff = 2.897f / 4095.0f;
 static uint8_t measurement_cnt = 0;
+static char display[21];
 static const uint8_t measurements[] = {
 	VOLTAGE_1_CH, 
 	CURRENT_1_CH, 
@@ -21,7 +22,7 @@ static const uint8_t measurements[] = {
 };
 
 int main() {
-	char display[21];
+	
 	LCD1602_Init();
 	LCD1602_Backlight(TRUE);
 	
@@ -30,8 +31,8 @@ int main() {
 		LCD1602_SetCursor(0,0);
 		LCD1602_Print(display);
 		
-		printf(display,"failed");
-		LCD1602_SetCursor(0,0);
+		sprintf(display,"failed");
+		LCD1602_SetCursor(0,1);
 		LCD1602_Print(display);
 		
 		while(1);
@@ -82,4 +83,24 @@ void ADC0_IRQHandler() {
 		result = (float)temp;
 		result_ok = 1;
 	}
+}
+
+uint8_t print_readout(void) {
+	sprintf(display, "Channel 1:");
+	LCD1602_SetCursor(0,0);
+	LCD1602_Print(display);
+	
+	sprintf(display, "U:%.3fV  I:%.3fA", v1, a1);
+	LCD1602_SetCursor(0,1);
+	LCD1602_Print(display);
+	
+	sprintf(display, "Channel 2:");
+	LCD1602_SetCursor(0,2);
+	LCD1602_Print(display);
+	
+	sprintf(display, "U:%.3fV  I:%.3fA", v2, a2);
+	LCD1602_SetCursor(0,3);
+	LCD1602_Print(display);
+	
+	return 0;
 }

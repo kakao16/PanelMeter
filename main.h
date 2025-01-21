@@ -20,3 +20,8 @@ int main(void);
  * @brief Interrupt handler for ADC.
  */
 void ADC0_IRQHandler(void);
+
+/**
+ * @brief Prints all measurements on screen.
+ */
+uint8_t print_readout(void);
