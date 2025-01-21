@@ -53,8 +53,8 @@ uint8_t ADC_Init(void)
 	cal_temp += ADC0->CLPS;
 	cal_temp += ADC0->CLPD;
 	cal_temp /= 2;
-	cal_temp |= 0x8000;                       	// MSB set to 1
-	ADC0->PG = ADC_PG_PG(cal_temp);           	// Value stored to plus-side gain register
+	cal_temp |= 0x8000;                       		// MSB set to 1
+	ADC0->PG = ADC_PG_PG(cal_temp);           		// Value stored to plus-side gain register
 	
 	// ADC0 config for normal operation
 	ADC0->SC1[0] = ADC_SC1_ADCH(31);							// Disable ADC

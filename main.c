@@ -13,7 +13,7 @@ static volatile float result;
 
 static const float adc_volt_coeff = 2.897f / 4095.0f;
 static uint8_t measurement_cnt = 0;
-static const uint8_t measuremenst[] = {
+static const uint8_t measurements[] = {
 	VOLTAGE_1_CH, 
 	CURRENT_1_CH, 
 	VOLTAGE_2_CH, 
@@ -68,7 +68,7 @@ int main() {
 			else {
 				measurement_cnt = 0;
 			}
-			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measuremenst[measurement_cnt]);
+			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measurements[measurement_cnt]);
 			result_ok = 0;
 		}
 	}
