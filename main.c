@@ -9,15 +9,17 @@
 #include "main.h"
 
 static volatile uint8_t result_ok = 0;
-static volatile float result;
+static volatile uint32_t temp;
+static volatile float temp_f;
+static volatile float results[4];
 
 static const float adc_volt_coeff = 2.897f / 4095.0f;
 static uint8_t measurement_cnt = 0;
 static char display[21];
 static const uint8_t measurements[] = {
-	VOLTAGE_1_CH, 
-	CURRENT_1_CH, 
-	VOLTAGE_2_CH, 
+	VOLTAGE_1_CH,
+	CURRENT_1_CH,
+	VOLTAGE_2_CH,
 	CURRENT_2_CH
 };
 
@@ -45,28 +47,27 @@ int main() {
 	LCD1602_ClearAll();
 	while(1) {
 		if(result_ok) {
-			result = result*adc_volt_coeff;
+			temp_f = temp_f*adc_volt_coeff;
 			switch(measurement_cnt) {
 				case 0:
-					sprintf(display,"U1=%.4fV", result);
+					results[0] = temp_f * 5.0f * 0.03387f;
 					break;
 				case 1:
-					sprintf(display,"I1=%.4fV", result);
+					results[1] = temp_f * 20.0f * 0.05f;
 					break;
 				case 2:
-					sprintf(display,"U2=%.4fV", result);
+					results[2] = temp_f * 5.0f * 0.03387f;
 					break;
 				case 3:
-					sprintf(display,"I2=%.4fV", result);
+					results[3] = temp_f * 20.0f * 0.05f;
 					break;
 			}
 			
 			if(measurement_cnt < 4) {
-				LCD1602_SetCursor(0,measurement_cnt);
-				LCD1602_Print(display);
 				measurement_cnt++;
 			}
 			else {
+				print_readout();
 				measurement_cnt = 0;
 			}
 			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measurements[measurement_cnt]);
@@ -76,29 +77,28 @@ int main() {
 }
 
 void ADC0_IRQHandler() {	
-	static uint32_t temp;
-	temp = ADC0->R[0];				// Read ADC data
+	temp = ADC0->R[0];					// Read ADC data
 	if(!result_ok)
 	{
-		result = (float)temp;
+		temp_f = (float)temp;
 		result_ok = 1;
 	}
 }
 
 uint8_t print_readout(void) {
-	sprintf(display, "Channel 1:");
+	sprintf(display, "Channel 1:          ");
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
 	
-	sprintf(display, "U:%.3fV  I:%.3fA", v1, a1);
+	sprintf(display, "U:%.3fV  I:%.3fA  ", results[0], results[1]);
 	LCD1602_SetCursor(0,1);
 	LCD1602_Print(display);
 	
-	sprintf(display, "Channel 2:");
+	sprintf(display, "Channel 2:          ");
 	LCD1602_SetCursor(0,2);
 	LCD1602_Print(display);
 	
-	sprintf(display, "U:%.3fV  I:%.3fA", v2, a2);
+	sprintf(display, "U:%.3fV  I:%.3fA  ", results[2], results[3]);
 	LCD1602_SetCursor(0,3);
 	LCD1602_Print(display);
 	
