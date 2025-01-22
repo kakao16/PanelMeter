@@ -53,21 +53,22 @@ uint8_t ADC_Init(void)
 	cal_temp += ADC0->CLPS;
 	cal_temp += ADC0->CLPD;
 	cal_temp /= 2;
-	cal_temp |= 0x8000;                       		// MSB set to 1
-	ADC0->PG = ADC_PG_PG(cal_temp);           		// Value stored to plus-side gain register
+	cal_temp |= 0x8000;                       					// MSB set to 1
+	ADC0->PG = ADC_PG_PG(cal_temp);           					// Value stored to plus-side gain register
 	
 	// ADC0 config for normal operation
-	ADC0->SC1[0] = ADC_SC1_ADCH(31);							// Disable ADC
-	ADC0->CFG1 =	ADC_CFG1_ADICLK(ADICLK_BUS_2) | // Input clk equal to BUS/2 = 10.49MHz, 
-								ADC_CFG1_ADIV(ADIV_1) | 				// divide by 1 so ADCK = 10.49MHz, 
-								ADC_CFG1_ADLSMP_MASK | 					// long sample time selected,
-								ADC_CFG1_MODE(MODE_12);					// set to 12 bit resolution
-	ADC0->CFG2 |= ADC_CFG2_ADHSC_MASK;						// High speed conversion enabled
+	ADC0->SC1[0] = ADC_SC1_ADCH(31);										// Disable ADC
+	ADC0->CFG1 =	ADC_CFG1_ADICLK(ADICLK_BUS_2) | 			// Input clk equal to BUS/2 = 10.49MHz, 
+								ADC_CFG1_ADIV(ADIV_1) | 							// divide by 1 so ADCK = 10.49MHz, 
+								ADC_CFG1_ADLSMP_MASK | 								// long sample time selected,
+								ADC_CFG1_MODE(MODE_12);								// set to 12 bit resolution
+	ADC0->CFG2 |= ADC_CFG2_ADHSC_MASK;									// High speed conversion enabled
+	ADC0->SC3  = ADC_SC3_AVGE_MASK | ADC_SC3_AVGS(2);		// Averege from 16 samples
 	
 	// ADC trigger config
-	ADC0->SC2 |= ADC_SC2_ADTRG_MASK;							// Hardwear trigger selected
+	ADC0->SC2 |= ADC_SC2_ADTRG_MASK;										// Hardwear trigger selected
 	SIM->SOPT7 |= SIM_SOPT7_ADC0ALTTRGEN_MASK | 	
-								SIM_SOPT7_ADC0TRGSEL(4);				// ADC0 triggered from PIT0
+								SIM_SOPT7_ADC0TRGSEL(4);							// ADC0 triggered from PIT0
 	NVIC_ClearPendingIRQ(ADC0_IRQn);
 	NVIC_EnableIRQ(ADC0_IRQn);
 	
