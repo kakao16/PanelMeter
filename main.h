@@ -11,6 +11,7 @@
 #include "lcd1602.h"
 #include "ADC.h"
 #include "pit.h"
+#include "encoder.h"
 
 #include <stdio.h>
 
@@ -25,3 +26,28 @@ void ADC0_IRQHandler(void);
  * @brief Prints all measurements on screen.
  */
 uint8_t print_readout(void);
+
+/**
+ * @brief Calculates value of measured voltage.
+ */
+float calculate_voltage(float voltage_adc);
+
+/**
+ * @brief Calculates value of measured currnet.
+ */
+float calculate_current(float voltage_adc);
+
+/**
+ * @brief Interrupt handler for PORTA.
+ */
+void PORTA_IRQHandler(void);
+
+/**
+ * @brief Interrupt handler for PORTB.
+ */
+void PORTB_IRQHandler(void);
+
+/**
+ * @brief Non-maskable interrupt handler. Used for button press.
+ */
+void NMI_Handler(void);

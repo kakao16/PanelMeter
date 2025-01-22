@@ -42,6 +42,17 @@ static const float gain_current_amp = 20.0f;
 
 static const float div_input = 33.0f / (20.0f + 33.0f);
 
+//----------------------------------------------
+// Encoder flags
+//----------------------------------------------
+static volatile uint8_t B_first = 0;
+static volatile uint8_t A_first = 0;
+
+static volatile uint8_t right = 0;
+static volatile uint8_t left = 0;
+
+static volatile uint8_t button = 0;
+
 int main() {
 	LCD1602_Init();
 	LCD1602_Backlight(TRUE);
@@ -59,6 +70,9 @@ int main() {
 		while(1);
 	}
 	
+	Encoder_Init();
+	Encoder_Int_Enable();
+	
 	// Start ADC from first measurement
 	uint8_t measurement_cnt = 0;
 	ADC0->SC1[measurement_cnt] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(3);
@@ -72,16 +86,16 @@ int main() {
 			temp_f = temp_f*adc_volt_coeff;
 			switch(measurement_cnt) {
 				case 0:
-					results[0] = ((temp_f / div_input) - offset_voltage_amp) / (div_voltage * gain_voltage_amp);
+					results[0] = calculate_voltage(temp_f);
 					break;
 				case 1:
-					results[1] = temp_f / (current_shunt * gain_current_amp * div_input);
+					results[1] = calculate_current(temp_f);
 					break;
 				case 2:
-					results[2] = ((temp_f / div_input) - offset_voltage_amp) / (div_voltage * gain_voltage_amp);
+					results[2] = calculate_voltage(temp_f);
 					break;
 				case 3:
-					results[3] = temp_f / (current_shunt * gain_current_amp * div_input);
+					results[3] = calculate_current(temp_f);
 					break;
 			}
 			if(measurement_cnt < 4) {
@@ -96,6 +110,7 @@ int main() {
 			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measurements[measurement_cnt]);
 			result_ready = 0;
 		}
+		
 	}
 }
 
@@ -126,4 +141,46 @@ uint8_t print_readout(void) {
 	LCD1602_Print(display);
 	
 	return 0;
+}
+
+float calculate_voltage(float voltage_adc) {
+	return ((voltage_adc / div_input) - offset_voltage_amp) / (div_voltage * gain_voltage_amp);
+}
+
+float calculate_current(float voltage_adc) {
+	return voltage_adc / (current_shunt * gain_current_amp * div_input);
+}
+
+void PORTA_IRQHandler(void) {
+	if(B_first) {
+		left = 1;
+		A_first = 0;
+		B_first = 0;
+	}
+	else {
+		A_first = 1;
+	}
+
+	// Clear interrupt register
+	PORTA->ISFR |= ENC_A_MASK;	
+	NVIC_ClearPendingIRQ(PORTA_IRQn);
+}
+
+void PORTB_IRQHandler(void) {
+	if(A_first) {
+		right = 1;
+		A_first = 0;
+		B_first = 0;
+	}
+	else {
+		B_first = 1;
+	}
+
+	// Clear interrupt register
+	PORTB->ISFR |= ENC_B_MASK;
+	NVIC_ClearPendingIRQ(PORTB_IRQn);
+}
+
+void NMI_Handler(void) {
+	if(!button) button = 1;
 }
