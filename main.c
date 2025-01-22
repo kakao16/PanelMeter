@@ -74,43 +74,61 @@ int main() {
 	Encoder_Int_Enable();
 	
 	// Start ADC from first measurement
-	uint8_t measurement_cnt = 0;
-	ADC0->SC1[measurement_cnt] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(3);
+	//uint8_t measurement_cnt = 0;
+	//ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measurements[measurement_cnt]);
 	PIT_Init();
 	
 	//----------------------------------------------
 	// Program loop
 	//----------------------------------------------
 	while(1) {
-		if(result_ready) {
+//		if(result_ready) {
+//			temp_f = temp_f*adc_volt_coeff;
+//			switch(measurement_cnt) {
+//				case 0:
+//					results[0] = calculate_voltage(temp_f);
+//					break;
+//				case 1:
+//					results[1] = calculate_current(temp_f);
+//					break;
+//				case 2:
+//					results[2] = calculate_voltage(temp_f);
+//					break;
+//				case 3:
+//					results[3] = calculate_current(temp_f);
+//					break;
+//			}
+//			if(measurement_cnt < 4) {
+//				measurement_cnt++;
+//			}
+//			else {
+//				print_readout();
+//				measurement_cnt = 0;
+//			}
+//			
+//			// Change ADC channel after measurement
+//			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measurements[measurement_cnt]);
+//			result_ready = 0;
+//		}
+		
+		for(uint8_t measurement_cnt_i = 0; measurement_cnt_i < 4; measurement_cnt_i++){
+			// Change ADC channel after measurement
+			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measurements[measurement_cnt_i]);
+			while(!result_ready) __NOP(); // Wait for new measurement
 			temp_f = temp_f*adc_volt_coeff;
-			switch(measurement_cnt) {
-				case 0:
-					results[0] = calculate_voltage(temp_f);
-					break;
-				case 1:
-					results[1] = calculate_current(temp_f);
-					break;
-				case 2:
-					results[2] = calculate_voltage(temp_f);
-					break;
-				case 3:
-					results[3] = calculate_current(temp_f);
-					break;
-			}
-			if(measurement_cnt < 4) {
-				measurement_cnt++;
+			
+			if(measurement_cnt_i % 2) {
+				results[measurement_cnt_i] = calculate_current(temp_f);
 			}
 			else {
-				print_readout();
-				measurement_cnt = 0;
+				results[measurement_cnt_i] = calculate_voltage(temp_f);
 			}
 			
-			// Change ADC channel after measurement
-			ADC0->SC1[0] = ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(measurements[measurement_cnt]);
+			if(measurement_cnt_i == 3) {
+				print_readout();
+			}
 			result_ready = 0;
 		}
-		
 	}
 }
 

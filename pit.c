@@ -16,8 +16,8 @@ void PIT_Init(void)
 	PIT->MCR &= ~PIT_MCR_MDIS_MASK;								// Enable PIT module
 	//tsv=BUS_CLOCK;															// 1s interval
 	//tsv=BUS_CLOCK/2;														// 0.5s interval
-	//tsv=BUS_CLOCK/10;														// 100ms interval
-	tsv=BUS_CLOCK/100;														// 10ms interval
+	tsv=BUS_CLOCK/10;														// 100ms interval
+	//tsv=BUS_CLOCK/100;														// 10ms interval
 	PIT->CHANNEL[0].LDVAL = PIT_LDVAL_TSV(tsv);		// Conter initial value
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN_MASK;		// Start counter
 }
