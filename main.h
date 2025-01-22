@@ -51,3 +51,9 @@ void PORTB_IRQHandler(void);
  * @brief Non-maskable interrupt handler. Used for button press.
  */
 void NMI_Handler(void);
+
+/**
+ * @brief Non-maskable interrupt handler. Used for button press.
+ */
+ uint8_t print_settings(void);
+ 

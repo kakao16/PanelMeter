@@ -53,6 +53,22 @@ static volatile uint8_t left = 0;
 
 static volatile uint8_t button = 0;
 
+//----------------------------------------------
+// Configuration menu
+//----------------------------------------------
+static const char *settings[] = {
+	"exit              ",
+  "div_voltage       ",
+  "offset_voltage    ",
+  "div_input         "
+};
+static uint8_t cursorPos = 0;
+
+enum screen {
+	READOUT,
+	SETTINGS
+};
+
 int main() {
 	LCD1602_Init();
 	LCD1602_Backlight(TRUE);
@@ -75,6 +91,8 @@ int main() {
 	
 	PIT_Init();
 	
+	enum screen active_screen = READOUT;
+	
 	//----------------------------------------------
 	// Program loop
 	//----------------------------------------------
@@ -94,7 +112,33 @@ int main() {
 			}
 			result_ready = 0;
 		}
-		print_readout();
+		
+		if(active_screen == READOUT) {
+			print_readout();
+			if(button) {
+				active_screen = SETTINGS;
+				button = 0;
+			}
+		}
+		else if(active_screen == SETTINGS) {
+			print_settings();
+			
+			if(button && cursorPos == 0) {
+				active_screen = READOUT;
+				button = 0;
+			}
+			
+			if(cursorPos > 0 && left) {
+				cursorPos--;
+				left = 0;
+			}
+			
+			if(cursorPos < (sizeof(settings)/sizeof(settings[1]) - 1) && right) {
+				cursorPos++;
+				right = 0;
+			}
+			
+		}
 		
 	}
 }
@@ -169,3 +213,17 @@ void PORTB_IRQHandler(void) {
 void NMI_Handler(void) {
 	if(!button) button = 1;
 }
+
+uint8_t print_settings(void) {
+	for(uint8_t i = 0; i < sizeof(settings)/sizeof(settings[1]); i++) {
+		if(i == cursorPos) {
+			sprintf(display, "> %s", settings[i]);
+		}
+		else sprintf(display, "  %s", settings[i]);
+		LCD1602_SetCursor(0,i);
+		LCD1602_Print(display);
+	}
+	
+	return 0;
+}
+
