@@ -59,14 +59,14 @@ static volatile uint8_t button = 0;
 static const char *settings[] = {
 	"exit              ",
   "div_voltage       ",
-  "offset_voltage    ",
-  "div_input         "
+  "offset_voltage    "
 };
 static uint8_t cursorPos = 0;
 
 enum screen {
 	READOUT,
-	SETTINGS
+	SETTINGS,
+	CALIBRATION
 };
 
 int main() {
@@ -113,31 +113,47 @@ int main() {
 			result_ready = 0;
 		}
 		
-		if(active_screen == READOUT) {
-			print_readout();
-			if(button) {
-				active_screen = SETTINGS;
-				button = 0;
-			}
-		}
-		else if(active_screen == SETTINGS) {
-			print_settings();
+		switch(active_screen){
+			case READOUT:
+				print_readout();
+				if(button) {
+					active_screen = SETTINGS;
+					LCD1602_ClearAll();
+					button = 0;
+				}
+				break;
 			
-			if(button && cursorPos == 0) {
-				active_screen = READOUT;
-				button = 0;
-			}
+			case SETTINGS:
+				print_settings();
+				if(button && cursorPos == 0) {
+					active_screen = READOUT;
+					LCD1602_ClearAll();
+					button = 0;
+				}
+				else if(button) {
+					active_screen = CALIBRATION;
+					LCD1602_ClearAll();
+					button = 0;
+				}
+				if(cursorPos > 0 && left) {
+					cursorPos--;
+					left = 0;
+				}
+				if(cursorPos < (sizeof(settings)/sizeof(settings[1]) - 1) && right) {
+					cursorPos++;
+					right = 0;
+				}
+				break;
 			
-			if(cursorPos > 0 && left) {
-				cursorPos--;
-				left = 0;
-			}
-			
-			if(cursorPos < (sizeof(settings)/sizeof(settings[1]) - 1) && right) {
-				cursorPos++;
-				right = 0;
-			}
-			
+			case CALIBRATION:
+				print_calibration();
+				if(button) {
+					active_screen = SETTINGS;
+					LCD1602_ClearAll();
+					button = 0;
+				}
+				
+				break;
 		}
 		
 	}
@@ -227,3 +243,27 @@ uint8_t print_settings(void) {
 	return 0;
 }
 
+uint8_t print_calibration(void) {
+	sprintf(display, "Ch1:U=%.3fV        ", (double)results[0]);
+	LCD1602_SetCursor(0,0);
+	LCD1602_Print(display);
+	
+	sprintf(display, "Ch1:U=%.3fV        ", (double)results[2]);
+	LCD1602_SetCursor(0,1);
+	LCD1602_Print(display);
+	
+	switch(cursorPos) {
+		case 1: 
+			sprintf(display, "div=%.5f", (double)div_voltage);
+			LCD1602_SetCursor(0,2);
+			LCD1602_Print(display);
+			break;
+		case 2:
+			sprintf(display, "offset=%.5f", (double)offset_voltage_amp);
+			LCD1602_SetCursor(0,2);
+			LCD1602_Print(display);
+			break;
+	}
+	
+	return 0;
+}

@@ -53,7 +53,11 @@ void PORTB_IRQHandler(void);
 void NMI_Handler(void);
 
 /**
- * @brief Non-maskable interrupt handler. Used for button press.
+ * @brief Prints list of settings on screen.
  */
- uint8_t print_settings(void);
- 
+uint8_t print_settings(void);
+
+/**
+ * @brief Prints calibration menu on screen.
+ */
+uint8_t print_calibration(void);
