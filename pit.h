@@ -2,7 +2,7 @@
  * @file pit.h
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
- * @brief Header file containing declarations for PIT module.
+ * @brief File containing declarations for PIT module.
  * @ver 1.0
  * Based on file provided for tutorials.
  */

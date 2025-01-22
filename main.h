@@ -2,7 +2,7 @@
  * @file main.h
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
- * @brief Header file containing declarations and includes of main loop.
+ * @brief File containing declarations of main function, interrut handlers and helper functions.
  * @ver 1.0
  */
 
