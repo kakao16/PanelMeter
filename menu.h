@@ -22,6 +22,13 @@
 extern char display[21];
 extern float results[4];
 
+enum screen {
+	READOUT,
+	SETTINGS,
+	CALIBRATION
+};
+extern enum screen active_screen;
+
 /**
  * @brief Prints all measurements on screen.
  */

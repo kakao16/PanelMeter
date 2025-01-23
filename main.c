@@ -23,16 +23,6 @@ static const uint8_t measurements[] = {
 	CURRENT_2_CH
 };
 
-
-
-enum screen {
-	READOUT,
-	SETTINGS,
-	CALIBRATION
-};
-
-extern enum screen active_screen;
-
 int main() {
 	LCD1602_Init();
 	LCD1602_Backlight(TRUE);
@@ -120,6 +110,7 @@ void PORTA_IRQHandler(void) {
 	}
 	else {
 		A_first = 1;
+		B_first = 0;
 	}
 
 	// Clear interrupt register
@@ -134,6 +125,7 @@ void PORTB_IRQHandler(void) {
 		B_first = 0;
 	}
 	else {
+		A_first = 0;
 		B_first = 1;
 	}
 

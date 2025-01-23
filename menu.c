@@ -24,13 +24,7 @@ static const char *settings[] = {
 };
 static uint8_t cursorPos = 0;
 
-enum screen {
-	READOUT,
-	SETTINGS,
-	CALIBRATION
-};
-
-static enum screen active_screen = READOUT;
+enum screen active_screen = READOUT;
  
 uint8_t print_readout(void) {
 	sprintf(display, "Channel 1:          ");
