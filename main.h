@@ -12,6 +12,8 @@
 #include "ADC.h"
 #include "pit.h"
 #include "encoder.h"
+#include "menu.h"
+#include "calibration.h"
 
 #include <stdio.h>
 
@@ -21,11 +23,6 @@ int main(void);
  * @brief Interrupt handler for ADC.
  */
 void ADC0_IRQHandler(void);
-
-/**
- * @brief Prints all measurements on screen.
- */
-uint8_t print_readout(void);
 
 /**
  * @brief Calculates value of measured voltage.
@@ -51,3 +48,5 @@ void PORTB_IRQHandler(void);
  * @brief Non-maskable interrupt handler. Used for button press.
  */
 void NMI_Handler(void);
+
+

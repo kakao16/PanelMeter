@@ -16,42 +16,12 @@ static volatile uint8_t result_ready = 0;
 static volatile uint32_t temp;
 static volatile float temp_f;
 
-static const float adc_volt_coeff = 2.897f / 4095.0f;
 static const uint8_t measurements[] = {
 	VOLTAGE_1_CH,
 	CURRENT_1_CH,
 	VOLTAGE_2_CH,
 	CURRENT_2_CH
 };
-
-//----------------------------------------------
-// Buffers for display
-//----------------------------------------------
-static char display[21];
-static float results[4];
-
-//----------------------------------------------
-// Analog path constants
-//----------------------------------------------
-static const float div_voltage = 94.0f / (2600.0f + 94.0f);
-static const float gain_voltage_amp = 5.0f;
-static const float offset_voltage_amp = 1.97f;
-
-static const float current_shunt = 0.05f;
-static const float gain_current_amp = 20.0f;
-
-static const float div_input = 33.0f / (20.0f + 33.0f);
-
-//----------------------------------------------
-// Encoder flags
-//----------------------------------------------
-static volatile uint8_t B_first = 0;
-static volatile uint8_t A_first = 0;
-
-static volatile uint8_t right = 0;
-static volatile uint8_t left = 0;
-
-static volatile uint8_t button = 0;
 
 int main() {
 	LCD1602_Init();
@@ -94,7 +64,23 @@ int main() {
 			}
 			result_ready = 0;
 		}
-		print_readout();
+		
+		switch(active_screen){
+			case READOUT:
+				print_readout();
+				update_readout();
+				break;
+			
+			case SETTINGS:
+				print_settings();
+				update_settings();
+				break;
+			
+			case CALIBRATION:
+				print_calibration();
+				update_calibration();
+				break;
+		}
 		
 	}
 }
@@ -106,26 +92,6 @@ void ADC0_IRQHandler() {
 		temp_f = (float)temp;
 		result_ready = 1;
 	}
-}
-
-uint8_t print_readout(void) {
-	sprintf(display, "Channel 1:          ");
-	LCD1602_SetCursor(0,0);
-	LCD1602_Print(display);
-	
-	sprintf(display, "U:%.3fV  I:%.3fA  ", (double)results[0], (double)results[1]);
-	LCD1602_SetCursor(0,1);
-	LCD1602_Print(display);
-	
-	sprintf(display, "Channel 2:          ");
-	LCD1602_SetCursor(0,2);
-	LCD1602_Print(display);
-	
-	sprintf(display, "U:%.3fV  I:%.3fA  ", (double)results[2], (double)results[3]);
-	LCD1602_SetCursor(0,3);
-	LCD1602_Print(display);
-	
-	return 0;
 }
 
 float calculate_voltage(float voltage_adc) {
@@ -144,6 +110,7 @@ void PORTA_IRQHandler(void) {
 	}
 	else {
 		A_first = 1;
+		B_first = 0;
 	}
 
 	// Clear interrupt register
@@ -158,6 +125,7 @@ void PORTB_IRQHandler(void) {
 		B_first = 0;
 	}
 	else {
+		A_first = 0;
 		B_first = 1;
 	}
 
