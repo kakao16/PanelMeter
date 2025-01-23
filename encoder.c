@@ -2,11 +2,22 @@
  * @file encoder.c
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
- * @brief File containing definitions for rotary encoder. 
+ * @brief File containing functions and flags definitions for rotary encoder. 
  * @ver 1.0
  */
  
  #include "encoder.h"
+ 
+//----------------------------------------------
+// Encoder flags
+//----------------------------------------------
+volatile uint8_t B_first = 0;
+volatile uint8_t A_first = 0;
+
+volatile uint8_t right = 0;
+volatile uint8_t left = 0;
+
+volatile uint8_t button = 0;
  
 uint8_t Encoder_Init(void) {
 	SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;			// PORTA clock enable
