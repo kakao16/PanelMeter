@@ -31,7 +31,7 @@ uint8_t Encoder_Init(void) {
 	// Pins pull disable
 	PORTB->PCR[ENC_B] &= ~PORT_PCR_PE_MASK;
 	PORTA->PCR[ENC_A] &= ~PORT_PCR_PE_MASK;
-	PORTA->PCR[BUTTON] &= ~PORT_PCR_PE_MASK;
+	PORTB->PCR[BUTTON] &= ~PORT_PCR_PE_MASK;
 	
 	return 0;
 }
@@ -40,7 +40,7 @@ uint8_t Encoder_Int_Enable(void) {
 	PORTB -> PCR[ENC_B] |= PORT_PCR_IRQC(EDGE_FALLING);		
 	PORTA -> PCR[ENC_A] |= PORT_PCR_IRQC(EDGE_FALLING);		
 	// Button uses NMI_b pin (PTB5)
-	//PORTB -> PCR[BUTTON] |= PORT_PCR_IRQC(EDGE_FALLING);
+	PORTB -> PCR[BUTTON] |= PORT_PCR_IRQC(EDGE_FALLING);
 	
 	// Interrupt configuration for
 	// Port A

@@ -105,6 +105,7 @@ float calculate_current(float voltage_adc) {
 void PORTA_IRQHandler(void) {
 	if(B_first) {
 		left = 1;
+		right = 0;
 		A_first = 0;
 		B_first = 0;
 	}
@@ -121,6 +122,7 @@ void PORTA_IRQHandler(void) {
 void PORTB_IRQHandler(void) {
 	if(A_first) {
 		right = 1;
+		left = 0;
 		A_first = 0;
 		B_first = 0;
 	}
