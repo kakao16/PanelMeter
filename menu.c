@@ -127,7 +127,7 @@ uint8_t update_calibration(void) {
 				div_voltage -= 0.001f;
 				left = 0;
 			}
-			if(right) {
+			else if(right) {
 				div_voltage += 0.001f;
 				right = 0;
 			}
@@ -137,7 +137,7 @@ uint8_t update_calibration(void) {
 				offset_voltage_amp -= 0.005f;
 				left = 0;
 			}
-			if(right) {
+			else if(right) {
 				offset_voltage_amp += 0.005f;
 				right = 0;
 			}
