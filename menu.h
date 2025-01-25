@@ -11,6 +11,8 @@
 #include "encoder.h"
 #include "calibration.h"
 
+#include "eeprom.h"
+
 #include <stdio.h>
 
 #ifndef menu_h
@@ -25,7 +27,8 @@ extern float results[4];
 enum screen {
 	READOUT,
 	SETTINGS,
-	CALIBRATION
+	CALIBRATION,
+	EEPROM_DEBUG
 };
 extern enum screen active_screen;
 
@@ -58,5 +61,18 @@ uint8_t update_settings(void);
  * @brief Updates readout screen logic.
  */
 uint8_t update_calibration(void);
+
+//----------------------------------------------
+// For testing eeprom write and read
+//----------------------------------------------
+/**
+ * @brief Updates eeprom debug screen.
+ */
+uint8_t update_eeprom_debug(void);
+
+/**
+ * @brief Prints eeprom debug screen.
+ */
+uint8_t print_eeprom_debug(void);
 
 #endif
