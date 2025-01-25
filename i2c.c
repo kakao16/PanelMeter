@@ -118,6 +118,7 @@ uint8_t I2C_WriteReg(uint8_t address, uint8_t reg, uint8_t data) {
 	i2c_send(data);													/* send data */
 	i2c_wait();
 	i2c_m_stop();														/* clear start mask */
+	DELAY(50)
 	i2c_disable();
 	
 	return error;

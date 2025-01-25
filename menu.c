@@ -158,20 +158,18 @@ uint8_t update_calibration(void) {
 	return 0;
 }
 
+
+
 uint8_t update_eeprom_debug(void) {
 	static uint8_t write = 1;
 	static uint8_t read = 1;
-	
 	if (write) {
-		error_write |= EEPROM_Write_byte(0x03, 0x03);
-		error_write |= EEPROM_Write_byte(0x02, 0x20);
-		error_write |= EEPROM_Write_byte(0x01, 0x10);
 		error_write |= EEPROM_Write_byte(0x00, 0x00);
 		write = 0;
 	}
 	
 	if(read) {
-		error_read = EEPROM_Read_byte(0x02, &buf);
+		error_read = EEPROM_Read_byte(0x00, &buf);
 		read = 0;
 	}
 	
