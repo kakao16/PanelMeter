@@ -40,6 +40,8 @@ int main() {
 		while(1);
 	}
 	
+	EEPROM_Init();
+	
 	Encoder_Init();
 	Encoder_Int_Enable();
 	

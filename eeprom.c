@@ -31,14 +31,24 @@ uint8_t EEPROM_Read_byte(uint8_t address, uint8_t* value) {
 
 uint8_t EEPROM_Write_f(uint8_t address, float value) {
 	error = 0x00;
-	
-	
+	union f_to_bytes conversion;
+	conversion.f = value;
+		
+	for(uint8_t i = 0; i < sizeof(conversion.bytes)/sizeof(conversion.bytes[0]); i++ ) {
+		error |= EEPROM_Write_byte(address + i, conversion.bytes[i]);
+	}
 	
 	return error;
 }
 
 uint8_t EEPROM_Read_f(uint8_t address, float* value) {
 	error = 0x00;
+	union f_to_bytes conversion;
+
+	for(uint8_t i = 0; i < sizeof(conversion.bytes)/sizeof(conversion.bytes[0]); i++ ) {
+		error |= EEPROM_Read_byte(address + i, &conversion.bytes[i]);
+	}
 	
+	*value = conversion.f;
 	return error;
 }

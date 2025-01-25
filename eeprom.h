@@ -13,6 +13,11 @@
 
 #define EEPROM_ADDRESS 0x50
 
+union f_to_bytes {
+	float 		f;
+	uint8_t		bytes[4];
+};
+
 /**
  * @brief Write float value to eeprom.
  * @return Errors.

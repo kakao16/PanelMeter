@@ -27,7 +27,7 @@ static uint8_t cursorPos = 0;
 
 enum screen active_screen = READOUT;
 
-static uint8_t buf = 0x00;
+static float buf = 0x00;
 static uint8_t error_write = 0;
 static uint8_t error_read = 0;
  
@@ -164,12 +164,12 @@ uint8_t update_eeprom_debug(void) {
 	static uint8_t write = 1;
 	static uint8_t read = 1;
 	if (write) {
-		error_write |= EEPROM_Write_byte(0x00, 0x00);
+		error_write |= EEPROM_Write_f(0x00, 21.12f);
 		write = 0;
 	}
 	
 	if(read) {
-		error_read = EEPROM_Read_byte(0x00, &buf);
+		error_read = EEPROM_Read_f(0x00, &buf);
 		read = 0;
 	}
 	
@@ -183,7 +183,7 @@ uint8_t update_eeprom_debug(void) {
 }
 
 uint8_t print_eeprom_debug(void) {
-	sprintf(display, "Value read: %d", buf);
+	sprintf(display, "Value read: %f", buf);
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
 	

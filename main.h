@@ -14,6 +14,7 @@
 #include "encoder.h"
 #include "menu.h"
 #include "calibration.h"
+#include "eeprom.h"
 
 #include <stdio.h>
 
