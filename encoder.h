@@ -29,9 +29,6 @@
 //----------------------------------------------
 // Encoder flags
 //----------------------------------------------
-extern volatile uint8_t B_first;
-extern volatile uint8_t A_first;
-
 extern volatile uint8_t right;
 extern volatile uint8_t left;
 

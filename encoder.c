@@ -11,9 +11,6 @@
 //----------------------------------------------
 // Encoder flags
 //----------------------------------------------
-volatile uint8_t B_first = 0;
-volatile uint8_t A_first = 0;
-
 volatile uint8_t right = 0;
 volatile uint8_t left = 0;
 

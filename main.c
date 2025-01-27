@@ -112,36 +112,20 @@ float calculate_current(float voltage_adc) {
 }
 
 void PORTA_IRQHandler(void) {
-	if(B_first) {
-		left = 1;
-		right = 0;
-		A_first = 0;
-		B_first = 0;
+	if(PTB->PDIR & ENC_B_MASK) {
+		right = 1;
 	}
-	else {
-		A_first = 1;
-		B_first = 0;
-	}
-
-	// Clear interrupt register
-	PORTA->ISFR |= ENC_A_MASK;	
+	
+	PORTA->ISFR |= ENC_A_MASK;
 	NVIC_ClearPendingIRQ(PORTA_IRQn);
 }
 
 void PORTB_IRQHandler(void) {
-	if(A_first) {
-		right = 1;
-		left = 0;
-		A_first = 0;
-		B_first = 0;
-	}
-	else {
-		A_first = 0;
-		B_first = 1;
+	if(PTA->PDIR & ENC_A_MASK) {
+		left = 1;
 	}
 
-	// Clear interrupt register
-	PORTB->ISFR |= ENC_B_MASK;
+	PORTB->ISFR |= ENC_B_MASK | BUTTON_MASK;	
 	NVIC_ClearPendingIRQ(PORTB_IRQn);
 }
 
