@@ -7,7 +7,7 @@
  * @author Koryciak
  * @date Nov 2020
  * @brief File containing enums, structures and declarations for I2C.
- * @ver 0.5
+ * @version 0.5
  */
 
 #ifndef I2C_H

@@ -3,7 +3,7 @@
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File containing declarations and constants for ADC module. 
- * @ver 1.0
+ * @version 1.0
  * Based on file provided for tutorials.
  */
 
@@ -22,7 +22,6 @@
 #define MODE_12           0x01
 #define MODE_10           0x02
 //#define MODE_16           0x03
-
 // Clock 
 #define ADICLK_BUS        0x00
 #define ADICLK_BUS_2      0x01
@@ -66,7 +65,8 @@
 #define CURRENT_1_CH				2
 #define VOLTAGE_2_CH				4
 #define CURRENT_2_CH				13
-//************************************************
+
+#define I2C_ERR_CALIBRATION	0x01 	/* error = calibration failed */
 
 /**
  * @brief ADC0 module initialization.

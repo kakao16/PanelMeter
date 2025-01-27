@@ -3,7 +3,7 @@
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File containing declarations of main function, interrut handlers and helper functions.
- * @ver 1.0
+ * @version 1.0
  */
 
 #include "MKL05Z4.h"
@@ -26,11 +26,15 @@ void ADC0_IRQHandler(void);
 
 /**
  * @brief Calculates value of measured voltage.
+ * @param Voltage read by the ADC.
+ * @return Voltage value on meter input.
  */
 float calculate_voltage(float voltage_adc);
 
 /**
- * @brief Calculates value of measured currnet.
+ * @brief Calculates value of measured current.
+ * @param Voltage read by the ADC.
+ * @return Current value flowing through the meter.
  */
 float calculate_current(float voltage_adc);
 

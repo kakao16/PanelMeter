@@ -3,7 +3,7 @@
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File function declaration for eeprom.
- * @ver 1.0
+ * @version 1.0
  */
 
 #include "i2c.h"
@@ -16,6 +16,9 @@
 //----------------------------------------------
 #define EEPROM_ADDRESS 0x50
 
+/**
+ * @brief Used to convert float into byte form and bytes back to float.
+ */
 union f_to_bytes {
 	float 		f;
 	uint8_t		bytes[4];

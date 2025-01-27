@@ -1,22 +1,16 @@
 /**
- * @file encoder.c
+ * @file menu.c
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File containing definitions of functions for menu logic. 
- * @ver 1.0
+ * @version 1.0
  */
  
 #include "menu.h"
- 
-//----------------------------------------------
-// Buffers for display
-//----------------------------------------------
+
 char display[21];
 float results[4];
 
-//----------------------------------------------
-// Configuration menu
-//----------------------------------------------
 static const char *settings[] = {
 	"exit              ",
   "div_voltage       ",
@@ -26,9 +20,6 @@ static uint8_t cursorPos = 0;
 
 enum screen active_screen = READOUT;
 
-//----------------------------------------------
-// Menu update and print error handler
-//----------------------------------------------
 static uint8_t error;
 
 uint8_t print_readout(void) {

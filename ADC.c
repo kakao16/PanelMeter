@@ -3,14 +3,17 @@
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File containing definitions for ADC module. 
- * @ver 1.0
+ * @version 1.0
  * Based on file provided for tutorials.
  */
 
 #include "ADC.h"
 
-uint8_t ADC_Init(void)
-{
+static uint8_t error;
+
+uint8_t ADC_Init(void) {
+	error = 0x00;
+	
 	SIM->SCGC6 |= SIM_SCGC6_ADC0_MASK;          // ADC0 clock enable
 	
 	// Clock gate configuration for					
@@ -40,7 +43,8 @@ uint8_t ADC_Init(void)
 	if(ADC0->SC3 & ADC_SC3_CALF_MASK)										// Check for calibration error
 	{
 	  ADC0->SC3 |= ADC_SC3_CALF_MASK;
-	  return(1);
+		error = I2C_ERR_CALIBRATION;
+	  return error;
 	}
 
 	uint16_t cal_temp;
@@ -72,6 +76,6 @@ uint8_t ADC_Init(void)
 	NVIC_ClearPendingIRQ(ADC0_IRQn);
 	NVIC_EnableIRQ(ADC0_IRQn);
 	
-	return(0);
+	return error;
 }
 

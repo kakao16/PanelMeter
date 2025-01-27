@@ -3,19 +3,21 @@
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File containing definitions of main function, interrut handlers, helper functions and variables.
- * @ver 1.0
+ * @version 1.0
  */
 
 #include "main.h"
 
-//----------------------------------------------
-// ADC flags, values and constants
-//----------------------------------------------
+/**
+ * ADC flags, values and constants.
+ */
 static volatile uint8_t result_ready = 0;
-
 static volatile uint32_t temp;
 static volatile float temp_f;
 
+/**
+ * Array with all used adc channels.
+ */
 static const uint8_t measurements[] = {
 	VOLTAGE_1_CH,
 	CURRENT_1_CH,
@@ -49,9 +51,7 @@ int main() {
 	
 	PIT_Init();
 	
-	//----------------------------------------------
-	// Program loop
-	//----------------------------------------------
+	/* Program loop */
 	while(1) {
 		for(uint8_t cnt = 0; cnt < 4; cnt++) {
 			ADC0->SC1[0] = 	ADC_SC1_AIEN_MASK | 								/* Keep ADC enabled */

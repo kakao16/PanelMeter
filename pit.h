@@ -3,7 +3,7 @@
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File containing declarations for PIT module.
- * @ver 1.0
+ * @version 1.0
  * Based on file provided for tutorials.
  */
 

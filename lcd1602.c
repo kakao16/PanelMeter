@@ -7,7 +7,7 @@
  * @author Koryciak & Soko³owski
  * @date Wrzesieñ 2024
  * @brief File containing definitions for LCD 2x16.
- * @ver 0.4
+ * @version 0.4
  */
 
 #include "lcd1602.h"

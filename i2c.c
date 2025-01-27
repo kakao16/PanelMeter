@@ -7,7 +7,7 @@
  * @author Koryciak & Sokolowski
  * @date Apr 2021
  * @brief File containing definitions for I2C.
- * @ver 1.0
+ * @version 1.0
  */
 
 #include "i2c.h"

@@ -3,19 +3,13 @@
  * @author Stanislaw Kusiak
  * @date winter 2024/2025 semester
  * @brief File function definitions for eeprom.
- * @ver 1.0
+ * @version 1.0
  */
  
 #include "eeprom.h"
 
-//----------------------------------------------
-// EEPROM I2C device address
-//----------------------------------------------
-static uint8_t eeprom_address = EEPROM_ADDRESS;
+static uint8_t eeprom_address = EEPROM_ADDRESS; /** EEPROM I2C device address */
 
-//----------------------------------------------
-// EEPROM operations error handler
-//----------------------------------------------
 static uint8_t error;
 
 uint8_t EEPROM_Init(void) {

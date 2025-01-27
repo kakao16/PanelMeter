@@ -7,7 +7,7 @@
  * @author Koryciak
  * @date Sep 2020
  * @brief File containing enums, structures and declarations for LCD 2x16.
- * @ver 0.1
+ * @version 0.1
  */
 
 #ifndef LCD1602_H
