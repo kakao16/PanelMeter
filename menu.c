@@ -27,10 +27,6 @@ static uint8_t cursorPos = 0;
 
 enum screen active_screen = READOUT;
 
-static float buf = 0x00;
-static uint8_t error_write = 0;
-static uint8_t error_read = 0;
- 
 uint8_t print_readout(void) {
 	sprintf(display, "Channel 1:          ");
 	LCD1602_SetCursor(0,0);
@@ -131,6 +127,9 @@ uint8_t update_calibration(void) {
 	if(button) {
 		active_screen = SETTINGS;
 		LCD1602_ClearAll();
+		
+		save_calibration();
+		
 		button = 0;
 	}
 	switch(cursorPos) {
@@ -158,18 +157,26 @@ uint8_t update_calibration(void) {
 	return 0;
 }
 
-
+//----------------------------------------------
+// Used only for EEPROM debugging
+//----------------------------------------------
+static float buf = 0x00;
+static uint8_t error_write = 0;
+static uint8_t error_read = 0;
 
 uint8_t update_eeprom_debug(void) {
-	static uint8_t write = 1;
-	static uint8_t read = 1;
+	static uint8_t write = 0;
+	static uint8_t read = 0;
+	static uint8_t wp;
 	if (write) {
-		error_write |= EEPROM_Write_f(0x00, 21.12f);
+		wp = 0x00;
+		error_write |= EEPROM_Write_f(&wp, 33.44f);
 		write = 0;
 	}
 	
 	if(read) {
-		error_read = EEPROM_Read_f(0x00, &buf);
+		wp = 0x00;
+		error_read = EEPROM_Read_f(&wp, &buf);
 		read = 0;
 	}
 	
@@ -183,7 +190,7 @@ uint8_t update_eeprom_debug(void) {
 }
 
 uint8_t print_eeprom_debug(void) {
-	sprintf(display, "Value read: %f", buf);
+	sprintf(display, "Value read: %f", (double)buf);
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
 	

@@ -28,6 +28,8 @@ int main() {
 	LCD1602_Backlight(TRUE);
 	LCD1602_ClearAll();
 	
+	load_calibration();
+	
 	if(ADC_Init()) {
 		sprintf(display,"ADC calibration");
 		LCD1602_SetCursor(0,0);

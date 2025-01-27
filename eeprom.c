@@ -8,7 +8,14 @@
  
 #include "eeprom.h"
 
+//----------------------------------------------
+// EEPROM I2C device address
+//----------------------------------------------
 static uint8_t eeprom_address = EEPROM_ADDRESS;
+
+//----------------------------------------------
+// EEPROM operations error handler
+//----------------------------------------------
 static uint8_t error;
 
 uint8_t EEPROM_Init(void) {
@@ -17,36 +24,38 @@ uint8_t EEPROM_Init(void) {
 	return error;
 }
 
-uint8_t EEPROM_Write_byte(uint8_t address, uint8_t value) {
+uint8_t EEPROM_Write_byte(uint8_t* address, uint8_t value) {
 	error = 0x00;
-	error = I2C_WriteReg(eeprom_address, address, value);
+	error = I2C_WriteReg(eeprom_address, *address, value);
+	(*address)++;
 	return error;
 }
 
-uint8_t EEPROM_Read_byte(uint8_t address, uint8_t* value) {
+uint8_t EEPROM_Read_byte(uint8_t* address, uint8_t* value) {
 	error = 0x00;
-	error = I2C_ReadReg(eeprom_address, address, value);
+	error = I2C_ReadReg(eeprom_address, *address, value);
+	(*address)++;
 	return error;
 }
 
-uint8_t EEPROM_Write_f(uint8_t address, float value) {
+uint8_t EEPROM_Write_f(uint8_t* address, float value) {
 	error = 0x00;
 	union f_to_bytes conversion;
 	conversion.f = value;
 		
 	for(uint8_t i = 0; i < sizeof(conversion.bytes)/sizeof(conversion.bytes[0]); i++ ) {
-		error |= EEPROM_Write_byte(address + i, conversion.bytes[i]);
+		error |= EEPROM_Write_byte(address, conversion.bytes[i]);
 	}
 	
 	return error;
 }
 
-uint8_t EEPROM_Read_f(uint8_t address, float* value) {
+uint8_t EEPROM_Read_f(uint8_t* address, float* value) {
 	error = 0x00;
 	union f_to_bytes conversion;
 
 	for(uint8_t i = 0; i < sizeof(conversion.bytes)/sizeof(conversion.bytes[0]); i++ ) {
-		error |= EEPROM_Read_byte(address + i, &conversion.bytes[i]);
+		error |= EEPROM_Read_byte(address, &conversion.bytes[i]);
 	}
 	
 	*value = conversion.f;

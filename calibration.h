@@ -6,6 +6,9 @@
  * @ver 1.0
  */
 
+#include "MKL05Z4.h"
+#include "eeprom.h"
+
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
@@ -25,6 +28,16 @@
 #define OFFSET_VOTAGE_AMP 1.97f
 
 //----------------------------------------------
+// Value to check if epprom was programmed
+//----------------------------------------------
+#define MEMORY_PROGRAMMED 0x50
+
+//----------------------------------------------
+// Value to check if epprom was programmed
+//----------------------------------------------
+#define CALIBRATION_ADDRESS 0x01
+
+//----------------------------------------------
 // Constants used for calibration
 //----------------------------------------------
 extern const float adc_volt_coeff;
@@ -41,5 +54,17 @@ extern const float div_input;
 //----------------------------------------------
 extern float div_voltage;
 extern float offset_voltage_amp;
+
+/**
+ * @brief Loads calibration values from EEPROM.
+ * @return Error.
+ */
+uint8_t load_calibration(void);
+
+/**
+ * @brief Saves calibration values to EEPROM.
+ * @return Error.
+ */
+uint8_t save_calibration(void);
 
 #endif
