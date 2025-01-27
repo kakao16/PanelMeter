@@ -61,3 +61,6 @@ RTE*
 JLink*
 Objects/
 EventRecorderStub.scvd
+
+# Documentation 
+doc/
