@@ -20,8 +20,7 @@ float results[4];
 static const char *settings[] = {
 	"exit              ",
   "div_voltage       ",
-  "offset_voltage    ",
-	"eeprom_debug"
+  "offset_voltage    "
 };
 static uint8_t cursorPos = 0;
 
@@ -116,12 +115,6 @@ uint8_t update_settings(void) {
 		button = 0;
 	}
 	
-	else if(button && cursorPos == 3) {
-		active_screen = EEPROM_DEBUG;
-		LCD1602_ClearAll();
-		button = 0;
-	}
-	
 	else if(button) {
 		active_screen = CALIBRATION;
 		LCD1602_ClearAll();
@@ -171,57 +164,5 @@ uint8_t update_calibration(void) {
 			}
 			break;
 	}
-	return error;
-}
-
-//----------------------------------------------
-// Used only for EEPROM debugging
-//----------------------------------------------
-static float buf = 0x00;
-static uint8_t error_write = 0;
-static uint8_t error_read = 0;
-
-uint8_t update_eeprom_debug(void) {
-	error = 0x00;
-	
-	static uint8_t write = 0;
-	static uint8_t read = 0;
-	static uint8_t wp;
-	if (write) {
-		wp = 0x00;
-		error_write |= EEPROM_Write_f(&wp, 33.44f);
-		write = 0;
-	}
-	
-	if(read) {
-		wp = 0x00;
-		error_read = EEPROM_Read_f(&wp, &buf);
-		read = 0;
-	}
-	
-	if(button) {
-		active_screen = SETTINGS;
-		LCD1602_ClearAll();
-		button = 0;
-	}
-	
-	return error;
-}
-
-uint8_t print_eeprom_debug(void) {
-	error = 0x00;
-	
-	sprintf(display, "Value read: %f", (double)buf);
-	LCD1602_SetCursor(0,0);
-	LCD1602_Print(display);
-	
-	sprintf(display, "Write error: %d", error_write);
-	LCD1602_SetCursor(0,1);
-	LCD1602_Print(display);
-	
-	sprintf(display, "Read error: %d", error_read);
-	LCD1602_SetCursor(0,2);
-	LCD1602_Print(display);
-	
 	return error;
 }

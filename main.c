@@ -84,13 +84,7 @@ int main() {
 				print_calibration();
 				update_calibration();
 				break;
-			
-			case EEPROM_DEBUG:
-				print_eeprom_debug();
-				update_eeprom_debug();
-			break;
 		}
-		
 	}
 }
 

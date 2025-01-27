@@ -27,8 +27,7 @@ extern float results[4];
 enum screen {
 	READOUT,
 	SETTINGS,
-	CALIBRATION,
-	EEPROM_DEBUG
+	CALIBRATION
 };
 extern enum screen active_screen;
 
