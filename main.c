@@ -28,6 +28,8 @@ int main() {
 	LCD1602_Backlight(TRUE);
 	LCD1602_ClearAll();
 	
+	load_calibration();
+	
 	if(ADC_Init()) {
 		sprintf(display,"ADC calibration");
 		LCD1602_SetCursor(0,0);
@@ -39,6 +41,8 @@ int main() {
 		
 		while(1);
 	}
+	
+	EEPROM_Init();
 	
 	Encoder_Init();
 	Encoder_Int_Enable();
@@ -80,6 +84,11 @@ int main() {
 				print_calibration();
 				update_calibration();
 				break;
+			
+			case EEPROM_DEBUG:
+				print_eeprom_debug();
+				update_eeprom_debug();
+			break;
 		}
 		
 	}
