@@ -177,27 +177,14 @@ uint8_t update_calibration(void) {
 //----------------------------------------------
 // Used only for EEPROM debugging
 //----------------------------------------------
-static float buf = 0x00;
+static uint8_t ping_ok = 0x00;
 static uint8_t error_write = 0;
 static uint8_t error_read = 0;
 
 uint8_t update_eeprom_debug(void) {
 	error = 0x00;
 	
-	static uint8_t write = 0;
-	static uint8_t read = 0;
-	static uint8_t wp;
-	if (write) {
-		wp = 0x00;
-		error_write |= EEPROM_Write_f(&wp, 33.44f);
-		write = 0;
-	}
-	
-	if(read) {
-		wp = 0x00;
-		error_read = EEPROM_Read_f(&wp, &buf);
-		read = 0;
-	}
+	ping_ok = I2C_Ping(EEPROM_ADDRESS);
 	
 	if(button) {
 		active_screen = SETTINGS;
@@ -211,7 +198,7 @@ uint8_t update_eeprom_debug(void) {
 uint8_t print_eeprom_debug(void) {
 	error = 0x00;
 	
-	sprintf(display, "Value read: %f", (double)buf);
+	sprintf(display, "Ping ok: %d", ping_ok);
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
 	
