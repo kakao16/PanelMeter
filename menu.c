@@ -27,7 +27,14 @@ static uint8_t cursorPos = 0;
 
 enum screen active_screen = READOUT;
 
+//----------------------------------------------
+// Menu update and print error handler
+//----------------------------------------------
+static uint8_t error;
+
 uint8_t print_readout(void) {
+	error = 0x00;
+	
 	sprintf(display, "Channel 1:          ");
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
@@ -44,10 +51,12 @@ uint8_t print_readout(void) {
 	LCD1602_SetCursor(0,3);
 	LCD1602_Print(display);
 	
-	return 0;
+	return error;
 }
 
 uint8_t print_settings(void) {
+	error = 0x00;
+	
 	for(uint8_t i = 0; i < sizeof(settings)/sizeof(settings[1]); i++) {
 		if(i == cursorPos) {
 			sprintf(display, "> %s", settings[i]);
@@ -57,10 +66,12 @@ uint8_t print_settings(void) {
 		LCD1602_Print(display);
 	}
 	
-	return 0;
+	return error;
 }
 
 uint8_t print_calibration(void) {
+	error = 0x00;
+	
 	sprintf(display, "  Ch1:U=%.3fV     ", (double)results[0]);
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
@@ -82,19 +93,23 @@ uint8_t print_calibration(void) {
 			break;
 	}
 	
-	return 0;
+	return error;
 }
 
 uint8_t update_readout(void) {
+	error = 0x00;
+	
 	if(button) {
 		active_screen = SETTINGS;
 		LCD1602_ClearAll();
 		button = 0;
 	}
-	return 0;
+	return error;
 }
 
 uint8_t update_settings(void) {
+	error = 0x00;
+	
 	if(button && cursorPos == 0) {
 		active_screen = READOUT;
 		LCD1602_ClearAll();
@@ -120,10 +135,12 @@ uint8_t update_settings(void) {
 		cursorPos++;
 		right = 0;
 	}
-	return 0;
+	return error;
 }
 
 uint8_t update_calibration(void) {
+	error = 0x00;
+	
 	if(button) {
 		active_screen = SETTINGS;
 		LCD1602_ClearAll();
@@ -154,7 +171,7 @@ uint8_t update_calibration(void) {
 			}
 			break;
 	}
-	return 0;
+	return error;
 }
 
 //----------------------------------------------
@@ -165,6 +182,8 @@ static uint8_t error_write = 0;
 static uint8_t error_read = 0;
 
 uint8_t update_eeprom_debug(void) {
+	error = 0x00;
+	
 	static uint8_t write = 0;
 	static uint8_t read = 0;
 	static uint8_t wp;
@@ -186,10 +205,12 @@ uint8_t update_eeprom_debug(void) {
 		button = 0;
 	}
 	
-	return 0;
+	return error;
 }
 
 uint8_t print_eeprom_debug(void) {
+	error = 0x00;
+	
 	sprintf(display, "Value read: %f", (double)buf);
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
@@ -201,5 +222,6 @@ uint8_t print_eeprom_debug(void) {
 	sprintf(display, "Read error: %d", error_read);
 	LCD1602_SetCursor(0,2);
 	LCD1602_Print(display);
-	return 0;
+	
+	return error;
 }

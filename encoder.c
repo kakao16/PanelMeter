@@ -18,8 +18,15 @@ volatile uint8_t right = 0;
 volatile uint8_t left = 0;
 
 volatile uint8_t button = 0;
+
+//----------------------------------------------
+// Encoder initialization error handler
+//----------------------------------------------
+static uint8_t error;
  
 uint8_t Encoder_Init(void) {
+	error = 0x00;
+	
 	SIM->SCGC5 |= SIM_SCGC5_PORTA_MASK;			// PORTA clock enable
 	SIM->SCGC5 |= SIM_SCGC5_PORTB_MASK;			// PORTB clock enable
 	
@@ -33,10 +40,12 @@ uint8_t Encoder_Init(void) {
 	PORTA->PCR[ENC_A] &= ~PORT_PCR_PE_MASK;
 	PORTB->PCR[BUTTON] &= ~PORT_PCR_PE_MASK;
 	
-	return 0;
+	return error;
 }
 
 uint8_t Encoder_Int_Enable(void) {
+	error = 0x00;
+	
 	PORTB -> PCR[ENC_B] |= PORT_PCR_IRQC(EDGE_FALLING);		
 	PORTA -> PCR[ENC_A] |= PORT_PCR_IRQC(EDGE_FALLING);		
 	// Button uses NMI_b pin (PTB5)
@@ -53,5 +62,5 @@ uint8_t Encoder_Int_Enable(void) {
 	NVIC_ClearPendingIRQ(PORTB_IRQn);
 	NVIC_EnableIRQ(PORTB_IRQn);
 	
-	return 0;
+	return error;
 }
