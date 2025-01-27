@@ -61,22 +61,22 @@ uint8_t print_settings(void) {
 }
 
 uint8_t print_calibration(void) {
-	sprintf(display, "Ch1:U=%.3fV        ", (double)results[0]);
+	sprintf(display, "  Ch1:U=%.3fV     ", (double)results[0]);
 	LCD1602_SetCursor(0,0);
 	LCD1602_Print(display);
 	
-	sprintf(display, "Ch1:U=%.3fV        ", (double)results[2]);
+	sprintf(display, "  Ch2:U=%.3fV     ", (double)results[2]);
 	LCD1602_SetCursor(0,1);
 	LCD1602_Print(display);
 	
 	switch(cursorPos) {
 		case 1: 
-			sprintf(display, "div=%.5f", (double)div_voltage);
+			sprintf(display, "> div=%.5f", (double)div_voltage);
 			LCD1602_SetCursor(0,2);
 			LCD1602_Print(display);
 			break;
 		case 2:
-			sprintf(display, "offset=%.5f", (double)offset_voltage_amp);
+			sprintf(display, "> offset=%.5f", (double)offset_voltage_amp);
 			LCD1602_SetCursor(0,2);
 			LCD1602_Print(display);
 			break;
