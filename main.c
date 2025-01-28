@@ -53,22 +53,23 @@ int main() {
 	
 	/* Program loop */
 	while(1) {
-		for(uint8_t cnt = 0; cnt < 4; cnt++) {
-			ADC0->SC1[0] = 	ADC_SC1_AIEN_MASK | 								/* Keep ADC enabled */
-											ADC_SC1_ADCH(measurements[cnt]); 		/* Change ADC channel */
-			while(!result_ready) __NOP(); 											/* Wait for new measurement */
-			temp_f = temp_f*adc_volt_coeff;
-			
-			/* Calculate and save measurement results */
-			if(cnt % 2) {
-				results[cnt] = calculate_current(temp_f);
+		if(active_screen != SETTINGS) {
+			for(uint8_t cnt = 0; cnt < 4; cnt++) {
+				ADC0->SC1[0] = 	ADC_SC1_AIEN_MASK | 								/* Keep ADC enabled */
+												ADC_SC1_ADCH(measurements[cnt]); 		/* Change ADC channel */
+				while(!result_ready) __NOP(); 											/* Wait for new measurement */
+				temp_f = temp_f*adc_volt_coeff;
+				
+				/* Calculate and save measurement results */
+				if(cnt % 2) {
+					results[cnt] = calculate_current(temp_f);
+				}
+				else {
+					results[cnt] = calculate_voltage(temp_f);
+				}
+				result_ready = 0;
 			}
-			else {
-				results[cnt] = calculate_voltage(temp_f);
-			}
-			result_ready = 0;
 		}
-		
 		switch(active_screen){
 			case READOUT:
 				print_readout();
